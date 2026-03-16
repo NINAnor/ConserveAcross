@@ -1,0 +1,49 @@
+---
+title: "Why Quarto + GitHub Pages?"
+---
+
+## A practical first release
+
+This prototype shows the **lowest-friction architecture** for the TBCA management effectiveness and governance tool:
+
+- **Quarto** provides a clean, maintainable web front end.
+- **GitHub** provides transparent version control.
+- **GitHub Pages** publishes the tool as a simple website.
+- **Structured question data** makes updating the tool easier than editing a macro-heavy workbook.
+- **Automated HTML/PDF reporting** can be generated from saved responses.
+
+## What this architecture is good at
+
+- workshop use across countries
+- transparent updates to questions and scoring logic
+- versioned releases
+- lightweight deployment
+- easy handover and long-term maintenance
+
+## What needs a second phase
+
+GitHub Pages is a **static hosting** solution. That means it does **not** natively provide:
+
+- secure multi-user logins
+- a central database of responses
+- real-time simultaneous editing
+
+Those are still possible later, but they need either:
+
+1. GitHub-based submission workflows (Issues / Pull Requests / Actions), or
+2. an external backend such as Supabase, Firebase, or a small API service.
+
+## Recommended delivery path
+
+### Phase 1
+Static Quarto app on GitHub Pages with:
+
+- questionnaire interface
+- local save / export
+- instant scoring
+- automated workshop summary
+
+### Phase 2
+Add collaborative persistence with a lightweight backend.
+
+That keeps the first deliverable realistic while still leaving room for a stronger multi-user platform.

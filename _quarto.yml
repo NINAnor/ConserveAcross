@@ -1,0 +1,19 @@
+project:
+  type: website
+  output-dir: docs
+
+website:
+  title: "TBCA Governance Tool Prototype"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Tool
+      - href: about.qmd
+        text: Approach
+
+format:
+  html:
+    theme: cosmo
+    toc: false
+    embed-resources: true
+    page-layout: full

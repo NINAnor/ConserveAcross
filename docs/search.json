@@ -1,0 +1,44 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "TBCA Management Effectiveness and Governance Tool",
+    "section": "",
+    "text": "Prototype purpose\n\n\nThis is a GitHub Pages-compatible static prototype. It demonstrates how the Excel-based tool can become a browser-based workflow with structured questions, transparent scoring, local save/export, and a workshop-ready summary report.\n\n\n&lt;button class=\"tbca-btn\" onclick=\"saveLocal()\"&gt;Save in browser&lt;/button&gt;\n&lt;button class=\"tbca-btn secondary\" onclick=\"downloadJSON()\"&gt;Export JSON&lt;/button&gt;\n&lt;button class=\"tbca-btn light\" onclick=\"window.print()\"&gt;Print / Save PDF&lt;/button&gt;\n&lt;button class=\"tbca-btn light\" onclick=\"clearFormData()\"&gt;Clear&lt;/button&gt;\n\n\nFor a first release on GitHub Pages, responses are stored in the participant’s browser and can be exported for workshop collation.\n\n\n\n\n&lt;div id=\"form-host\"&gt;&lt;/div&gt;\n\n\n&lt;div class=\"tbca-card\"&gt;\n  &lt;h4&gt;Assessment summary&lt;/h4&gt;\n  &lt;div class=\"tbca-badge\"&gt;Live scoring&lt;/div&gt;\n  &lt;div id=\"overall-score\" class=\"tbca-kpi\"&gt;–&lt;/div&gt;\n  &lt;div id=\"overall-label\" class=\"tbca-small\"&gt;Complete the scored questions to see a summary.&lt;/div&gt;\n&lt;/div&gt;\n\n&lt;div class=\"tbca-card\"&gt;\n  &lt;h4&gt;Section scores&lt;/h4&gt;\n  &lt;div id=\"section-scores\"&gt;&lt;/div&gt;\n&lt;/div&gt;\n\n&lt;div class=\"tbca-card\"&gt;\n  &lt;h4&gt;Automated report preview&lt;/h4&gt;\n  &lt;div id=\"report-preview\" class=\"tbca-report\"&gt;No report text yet.&lt;/div&gt;\n&lt;/div&gt;"
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "Why Quarto + GitHub Pages?",
+    "section": "",
+    "text": "This prototype shows the lowest-friction architecture for the TBCA management effectiveness and governance tool:\n\nQuarto provides a clean, maintainable web front end.\nGitHub provides transparent version control.\nGitHub Pages publishes the tool as a simple website.\nStructured question data makes updating the tool easier than editing a macro-heavy workbook.\nAutomated HTML/PDF reporting can be generated from saved responses."
+  },
+  {
+    "objectID": "about.html#a-practical-first-release",
+    "href": "about.html#a-practical-first-release",
+    "title": "Why Quarto + GitHub Pages?",
+    "section": "",
+    "text": "This prototype shows the lowest-friction architecture for the TBCA management effectiveness and governance tool:\n\nQuarto provides a clean, maintainable web front end.\nGitHub provides transparent version control.\nGitHub Pages publishes the tool as a simple website.\nStructured question data makes updating the tool easier than editing a macro-heavy workbook.\nAutomated HTML/PDF reporting can be generated from saved responses."
+  },
+  {
+    "objectID": "about.html#what-this-architecture-is-good-at",
+    "href": "about.html#what-this-architecture-is-good-at",
+    "title": "Why Quarto + GitHub Pages?",
+    "section": "What this architecture is good at",
+    "text": "What this architecture is good at\n\nworkshop use across countries\ntransparent updates to questions and scoring logic\nversioned releases\nlightweight deployment\neasy handover and long-term maintenance"
+  },
+  {
+    "objectID": "about.html#what-needs-a-second-phase",
+    "href": "about.html#what-needs-a-second-phase",
+    "title": "Why Quarto + GitHub Pages?",
+    "section": "What needs a second phase",
+    "text": "What needs a second phase\nGitHub Pages is a static hosting solution. That means it does not natively provide:\n\nsecure multi-user logins\na central database of responses\nreal-time simultaneous editing\n\nThose are still possible later, but they need either:\n\nGitHub-based submission workflows (Issues / Pull Requests / Actions), or\nan external backend such as Supabase, Firebase, or a small API service."
+  },
+  {
+    "objectID": "about.html#recommended-delivery-path",
+    "href": "about.html#recommended-delivery-path",
+    "title": "Why Quarto + GitHub Pages?",
+    "section": "Recommended delivery path",
+    "text": "Recommended delivery path\n\nPhase 1\nStatic Quarto app on GitHub Pages with:\n\nquestionnaire interface\nlocal save / export\ninstant scoring\nautomated workshop summary\n\n\n\nPhase 2\nAdd collaborative persistence with a lightweight backend.\nThat keeps the first deliverable realistic while still leaving room for a stronger multi-user platform."
+  }
+]

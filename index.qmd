@@ -1,0 +1,302 @@
+---
+title: "TBCA Management Effectiveness and Governance Tool"
+subtitle: "Static Quarto + GitHub Pages prototype"
+---
+
+<style>
+.tbca-shell {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem 1.25rem 3rem 1.25rem;
+}
+.tbca-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 1.25rem;
+}
+.tbca-card {
+  background: #fff;
+  border: 1px solid #d9e1e7;
+  border-radius: 16px;
+  padding: 1rem 1.1rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,.05);
+  margin-bottom: 1rem;
+}
+.tbca-card h3, .tbca-card h4 { margin-top: 0; }
+.tbca-section {
+  border-top: 1px solid #edf1f4;
+  margin-top: 1rem;
+  padding-top: 1rem;
+}
+.tbca-question { margin-bottom: 1rem; }
+.tbca-question label.main { font-weight: 600; display:block; margin-bottom:.45rem; }
+.tbca-options label { display:block; font-weight: 400; margin-bottom: .35rem; }
+.tbca-input, .tbca-textarea {
+  width: 100%;
+  border: 1px solid #c7d2da;
+  border-radius: 10px;
+  padding: .65rem .8rem;
+}
+.tbca-textarea { min-height: 110px; }
+.tbca-toolbar {
+  display:flex; flex-wrap:wrap; gap:.6rem; margin:.75rem 0 1rem 0;
+}
+.tbca-btn {
+  border:none; border-radius: 999px; padding:.65rem .95rem; cursor:pointer;
+  background:#0d6efd; color:#fff; font-weight:600;
+}
+.tbca-btn.secondary { background:#6c757d; }
+.tbca-btn.light { background:#eef3f7; color:#213547; }
+.tbca-badge {
+  display:inline-block; padding:.25rem .55rem; border-radius:999px; background:#eef3f7; font-size:.9rem;
+}
+.tbca-kpi { font-size: 2rem; font-weight: 700; margin: .25rem 0; }
+.tbca-small { color:#5c6b77; font-size:.95rem; }
+.tbca-report {
+  white-space: pre-wrap;
+  background:#f8fafb;
+  border-radius: 12px;
+  padding: .9rem;
+  border: 1px solid #e4ebf0;
+}
+@media (max-width: 900px) {
+  .tbca-grid { grid-template-columns: 1fr; }
+}
+</style>
+
+<div class="tbca-shell">
+
+<div class="tbca-card">
+  <h3>Prototype purpose</h3>
+  <p>This is a <strong>GitHub Pages-compatible static prototype</strong>. It demonstrates how the Excel-based tool can become a browser-based workflow with structured questions, transparent scoring, local save/export, and a workshop-ready summary report.</p>
+  <div class="tbca-toolbar">
+    <button class="tbca-btn" onclick="saveLocal()">Save in browser</button>
+    <button class="tbca-btn secondary" onclick="downloadJSON()">Export JSON</button>
+    <button class="tbca-btn light" onclick="window.print()">Print / Save PDF</button>
+    <button class="tbca-btn light" onclick="clearFormData()">Clear</button>
+  </div>
+  <div class="tbca-small">For a first release on GitHub Pages, responses are stored in the participant's browser and can be exported for workshop collation.</div>
+</div>
+
+<div class="tbca-grid">
+  <div>
+    <div id="form-host"></div>
+  </div>
+  <div>
+    <div class="tbca-card">
+      <h4>Assessment summary</h4>
+      <div class="tbca-badge">Live scoring</div>
+      <div id="overall-score" class="tbca-kpi">–</div>
+      <div id="overall-label" class="tbca-small">Complete the scored questions to see a summary.</div>
+    </div>
+
+    <div class="tbca-card">
+      <h4>Section scores</h4>
+      <div id="section-scores"></div>
+    </div>
+
+    <div class="tbca-card">
+      <h4>Automated report preview</h4>
+      <div id="report-preview" class="tbca-report">No report text yet.</div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script>
+let QUESTIONS = [];
+const STORAGE_KEY = "tbca-prototype-v1";
+
+async function initTool() {
+  const res = await fetch('questions.json');
+  QUESTIONS = await res.json();
+  renderForm();
+  loadLocal();
+  updateSummary();
+}
+
+function groupedQuestions() {
+  const out = {};
+  QUESTIONS.forEach(q => {
+    if (!out[q.section]) out[q.section] = [];
+    out[q.section].push(q);
+  });
+  return out;
+}
+
+function renderForm() {
+  const host = document.getElementById('form-host');
+  const groups = groupedQuestions();
+  host.innerHTML = Object.entries(groups).map(([section, questions]) => `
+    <div class="tbca-card">
+      <h3>${section}</h3>
+      ${questions.map(renderQuestion).join('')}
+    </div>
+  `).join('');
+}
+
+function renderQuestion(q) {
+  if (q.type === 'text') {
+    return `
+      <div class="tbca-question">
+        <label class="main" for="${q.id}">${q.label}</label>
+        <input class="tbca-input" id="${q.id}" type="text" oninput="updateSummary()" />
+      </div>`;
+  }
+  if (q.type === 'textarea') {
+    return `
+      <div class="tbca-question">
+        <label class="main" for="${q.id}">${q.label}</label>
+        <textarea class="tbca-textarea" id="${q.id}" oninput="updateSummary()"></textarea>
+      </div>`;
+  }
+  if (q.type === 'score') {
+    return `
+      <div class="tbca-question">
+        <label class="main">${q.label}</label>
+        <div class="tbca-options">
+          ${q.options.map(opt => `
+            <label>
+              <input type="radio" name="${q.id}" value="${opt.value}" onchange="updateSummary()" />
+              ${opt.label} <span class="tbca-small">(${opt.value})</span>
+            </label>
+          `).join('')}
+        </div>
+      </div>`;
+  }
+  return '';
+}
+
+function getValue(q) {
+  if (q.type === 'text' || q.type === 'textarea') {
+    return document.getElementById(q.id)?.value || '';
+  }
+  if (q.type === 'score') {
+    const checked = document.querySelector(`input[name="${q.id}"]:checked`);
+    return checked ? Number(checked.value) : null;
+  }
+  return null;
+}
+
+function setValue(q, value) {
+  if (value === undefined || value === null) return;
+  if (q.type === 'text' || q.type === 'textarea') {
+    const el = document.getElementById(q.id);
+    if (el) el.value = value;
+  }
+  if (q.type === 'score') {
+    const el = document.querySelector(`input[name="${q.id}"][value="${value}"]`);
+    if (el) el.checked = true;
+  }
+}
+
+function collectData() {
+  const data = {};
+  QUESTIONS.forEach(q => data[q.id] = getValue(q));
+  return data;
+}
+
+function saveLocal() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(collectData()));
+  alert('Responses saved in this browser.');
+}
+
+function loadLocal() {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if (!raw) return;
+  try {
+    const data = JSON.parse(raw);
+    QUESTIONS.forEach(q => setValue(q, data[q.id]));
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+function clearFormData() {
+  if (!confirm('Clear all answers in this browser?')) return;
+  localStorage.removeItem(STORAGE_KEY);
+  QUESTIONS.forEach(q => {
+    if (q.type === 'text' || q.type === 'textarea') {
+      const el = document.getElementById(q.id);
+      if (el) el.value = '';
+    }
+    if (q.type === 'score') {
+      document.querySelectorAll(`input[name="${q.id}"]`).forEach(el => el.checked = false);
+    }
+  });
+  updateSummary();
+}
+
+function downloadJSON() {
+  const payload = {
+    exported_at: new Date().toISOString(),
+    tool: 'TBCA Governance Tool Prototype',
+    responses: collectData()
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], {type: 'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'tbca_responses.json';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function updateSummary() {
+  const scores = QUESTIONS.filter(q => q.type === 'score').map(q => ({section: q.section, value: getValue(q)})).filter(x => x.value !== null);
+  const total = scores.length ? scores.reduce((a,b) => a+b.value, 0) / scores.length : null;
+  document.getElementById('overall-score').textContent = total ? total.toFixed(1) + ' / 5' : '–';
+  document.getElementById('overall-label').textContent = total ? interpretScore(total) : 'Complete the scored questions to see a summary.';
+
+  const bySection = {};
+  scores.forEach(x => {
+    if (!bySection[x.section]) bySection[x.section] = [];
+    bySection[x.section].push(x.value);
+  });
+  document.getElementById('section-scores').innerHTML = Object.entries(bySection).map(([section, vals]) => {
+    const avg = vals.reduce((a,b)=>a+b,0)/vals.length;
+    return `<div class="tbca-section"><strong>${section}</strong><div>${avg.toFixed(1)} / 5</div><div class="tbca-small">${interpretScore(avg)}</div></div>`;
+  }).join('') || '<div class="tbca-small">No scored answers yet.</div>';
+
+  buildReport(total, bySection);
+}
+
+function interpretScore(x) {
+  if (x >= 4) return 'Strong readiness / favourable conditions';
+  if (x >= 3) return 'Moderate feasibility with areas needing support';
+  return 'Substantial barriers or risks to address';
+}
+
+function buildReport(total, bySection) {
+  const data = collectData();
+  const lines = [];
+  lines.push('TBCA MANAGEMENT EFFECTIVENESS AND GOVERNANCE TOOL — WORKSHOP SUMMARY');
+  lines.push('');
+  lines.push(`Initiative: ${data.A1_name || '[not filled]'}`);
+  lines.push(`Countries: ${data.A1_countries || '[not filled]'}`);
+  lines.push('');
+  lines.push(`Overall indicative score: ${total ? total.toFixed(1) + ' / 5' : '[not enough information]'}`);
+  if (total) lines.push(`Interpretation: ${interpretScore(total)}`);
+  lines.push('');
+  lines.push('Section overview:');
+  if (Object.keys(bySection).length === 0) {
+    lines.push('- No scored responses yet.');
+  } else {
+    Object.entries(bySection).forEach(([section, vals]) => {
+      const avg = vals.reduce((a,b)=>a+b,0)/vals.length;
+      lines.push(`- ${section}: ${avg.toFixed(1)} / 5 (${interpretScore(avg)})`);
+    });
+  }
+  lines.push('');
+  lines.push('Discussion points:');
+  if (data.general_comment) {
+    lines.push(data.general_comment);
+  } else {
+    lines.push('[no notes added]');
+  }
+  document.getElementById('report-preview').textContent = lines.join('\n');
+}
+
+initTool();
+</script>

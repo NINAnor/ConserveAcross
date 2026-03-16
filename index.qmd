@@ -1,8 +1,10 @@
 ---
 title: "TBCA Management Effectiveness and Governance Tool"
 subtitle: "Static Quarto + GitHub Pages prototype"
+format: html
 ---
 
+```{=html}
 <style>
 .tbca-shell {
   max-width: 1200px;
@@ -66,41 +68,41 @@ subtitle: "Static Quarto + GitHub Pages prototype"
 
 <div class="tbca-shell">
 
-<div class="tbca-card">
-  <h3>Prototype purpose</h3>
-  <p>This is a <strong>GitHub Pages-compatible static prototype</strong>. It demonstrates how the Excel-based tool can become a browser-based workflow with structured questions, transparent scoring, local save/export, and a workshop-ready summary report.</p>
-  <div class="tbca-toolbar">
-    <button class="tbca-btn" onclick="saveLocal()">Save in browser</button>
-    <button class="tbca-btn secondary" onclick="downloadJSON()">Export JSON</button>
-    <button class="tbca-btn light" onclick="window.print()">Print / Save PDF</button>
-    <button class="tbca-btn light" onclick="clearFormData()">Clear</button>
-  </div>
-  <div class="tbca-small">For a first release on GitHub Pages, responses are stored in the participant's browser and can be exported for workshop collation.</div>
-</div>
-
-<div class="tbca-grid">
-  <div>
-    <div id="form-host"></div>
-  </div>
-  <div>
-    <div class="tbca-card">
-      <h4>Assessment summary</h4>
-      <div class="tbca-badge">Live scoring</div>
-      <div id="overall-score" class="tbca-kpi">–</div>
-      <div id="overall-label" class="tbca-small">Complete the scored questions to see a summary.</div>
+  <div class="tbca-card">
+    <h3>Prototype purpose</h3>
+    <p>This is a <strong>GitHub Pages-compatible static prototype</strong>. It demonstrates how the Excel-based tool can become a browser-based workflow with structured questions, transparent scoring, local save/export, and a workshop-ready summary report.</p>
+    <div class="tbca-toolbar">
+      <button class="tbca-btn" onclick="saveLocal()">Save in browser</button>
+      <button class="tbca-btn secondary" onclick="downloadJSON()">Export JSON</button>
+      <button class="tbca-btn light" onclick="window.print()">Print / Save PDF</button>
+      <button class="tbca-btn light" onclick="clearFormData()">Clear</button>
     </div>
+    <div class="tbca-small">For a first release on GitHub Pages, responses are stored in the participant's browser and can be exported for workshop collation.</div>
+  </div>
 
-    <div class="tbca-card">
-      <h4>Section scores</h4>
-      <div id="section-scores"></div>
+  <div class="tbca-grid">
+    <div>
+      <div id="form-host"></div>
     </div>
+    <div>
+      <div class="tbca-card">
+        <h4>Assessment summary</h4>
+        <div class="tbca-badge">Live scoring</div>
+        <div id="overall-score" class="tbca-kpi">–</div>
+        <div id="overall-label" class="tbca-small">Complete the scored questions to see a summary.</div>
+      </div>
 
-    <div class="tbca-card">
-      <h4>Automated report preview</h4>
-      <div id="report-preview" class="tbca-report">No report text yet.</div>
+      <div class="tbca-card">
+        <h4>Section scores</h4>
+        <div id="section-scores"></div>
+      </div>
+
+      <div class="tbca-card">
+        <h4>Automated report preview</h4>
+        <div id="report-preview" class="tbca-report">No report text yet.</div>
+      </div>
     </div>
   </div>
-</div>
 
 </div>
 
@@ -244,8 +246,13 @@ function downloadJSON() {
 }
 
 function updateSummary() {
-  const scores = QUESTIONS.filter(q => q.type === 'score').map(q => ({section: q.section, value: getValue(q)})).filter(x => x.value !== null);
-  const total = scores.length ? scores.reduce((a,b) => a+b.value, 0) / scores.length : null;
+  const scores = QUESTIONS
+    .filter(q => q.type === 'score')
+    .map(q => ({section: q.section, value: getValue(q)}))
+    .filter(x => x.value !== null);
+
+  const total = scores.length ? scores.reduce((a, b) => a + b.value, 0) / scores.length : null;
+
   document.getElementById('overall-score').textContent = total ? total.toFixed(1) + ' / 5' : '–';
   document.getElementById('overall-label').textContent = total ? interpretScore(total) : 'Complete the scored questions to see a summary.';
 
@@ -254,10 +261,12 @@ function updateSummary() {
     if (!bySection[x.section]) bySection[x.section] = [];
     bySection[x.section].push(x.value);
   });
-  document.getElementById('section-scores').innerHTML = Object.entries(bySection).map(([section, vals]) => {
-    const avg = vals.reduce((a,b)=>a+b,0)/vals.length;
-    return `<div class="tbca-section"><strong>${section}</strong><div>${avg.toFixed(1)} / 5</div><div class="tbca-small">${interpretScore(avg)}</div></div>`;
-  }).join('') || '<div class="tbca-small">No scored answers yet.</div>';
+
+  document.getElementById('section-scores').innerHTML =
+    Object.entries(bySection).map(([section, vals]) => {
+      const avg = vals.reduce((a, b) => a + b, 0) / vals.length;
+      return `<div class="tbca-section"><strong>${section}</strong><div>${avg.toFixed(1)} / 5</div><div class="tbca-small">${interpretScore(avg)}</div></div>`;
+    }).join('') || '<div class="tbca-small">No scored answers yet.</div>';
 
   buildReport(total, bySection);
 }
@@ -284,7 +293,7 @@ function buildReport(total, bySection) {
     lines.push('- No scored responses yet.');
   } else {
     Object.entries(bySection).forEach(([section, vals]) => {
-      const avg = vals.reduce((a,b)=>a+b,0)/vals.length;
+      const avg = vals.reduce((a, b) => a + b, 0) / vals.length;
       lines.push(`- ${section}: ${avg.toFixed(1)} / 5 (${interpretScore(avg)})`);
     });
   }
@@ -300,3 +309,4 @@ function buildReport(total, bySection) {
 
 initTool();
 </script>
+```

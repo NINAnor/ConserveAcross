@@ -1,0 +1,74 @@
+[
+  {
+    "id": "A1_name",
+    "section": "Part A — Background and context",
+    "type": "text",
+    "label": "Name of the transboundary conservation initiative"
+  },
+  {
+    "id": "A1_countries",
+    "section": "Part A — Background and context",
+    "type": "text",
+    "label": "Participating countries"
+  },
+  {
+    "id": "B2_shared_ecosystems",
+    "section": "Part B — Site values and threats",
+    "type": "score",
+    "label": "Does the TBCA contain shared ecosystems across international boundaries?",
+    "options": [
+      {"value": 5, "label": "Yes"},
+      {"value": 1, "label": "No"}
+    ]
+  },
+  {
+    "id": "B2_coop_help",
+    "section": "Part B — Site values and threats",
+    "type": "score",
+    "label": "Would transboundary cooperation help protect, restore, maintain or sustainably use shared ecosystems?",
+    "options": [
+      {"value": 5, "label": "Yes, significantly"},
+      {"value": 3, "label": "To some extent"},
+      {"value": 1, "label": "No"}
+    ]
+  },
+  {
+    "id": "C1_state_budget",
+    "section": "Part C — Economy",
+    "type": "score",
+    "label": "To what extent would financial contributions be available from state budgets?",
+    "options": [
+      {"value": 5, "label": "Sufficient"},
+      {"value": 3, "label": "Limited, but enough to start"},
+      {"value": 1, "label": "None"}
+    ]
+  },
+  {
+    "id": "D1_relations_iplc",
+    "section": "Part D — Socio-cultural dynamics",
+    "type": "score",
+    "label": "How would you describe relations between IPLCs across international boundaries?",
+    "options": [
+      {"value": 5, "label": "Friendly"},
+      {"value": 3, "label": "Neutral"},
+      {"value": 1, "label": "Conflicting"}
+    ]
+  },
+  {
+    "id": "E1_political_relations",
+    "section": "Part E — Governance and management framework",
+    "type": "score",
+    "label": "How would you describe the political relations between the concerned countries?",
+    "options": [
+      {"value": 5, "label": "Friendly"},
+      {"value": 3, "label": "Neutral"},
+      {"value": 1, "label": "Conflicting"}
+    ]
+  },
+  {
+    "id": "general_comment",
+    "section": "General comments",
+    "type": "textarea",
+    "label": "Optional notes for workshop discussion"
+  }
+]

@@ -1,7 +1,9 @@
 project:
   type: website
   output-dir: docs
-
+  resources:
+    - questions.json
+    
 website:
   title: "TBCA Governance Tool Prototype"
   navbar:
